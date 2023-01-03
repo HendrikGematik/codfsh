@@ -10,62 +10,106 @@
  *
  * The most important class of the Debug Adapter is the MockDebugSession which implements many DAP requests by talking to the MockRuntime.
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MockDebugSession = void 0;
-const debugadapter_1 = require("@vscode/debugadapter");
-const path_browserify_1 = require("path-browserify");
-const fshRuntime_1 = require("./fshRuntime");
-const await_notify_1 = require("await-notify");
-class MockDebugSession extends debugadapter_1.LoggingDebugSession {
+var debugadapter_1 = require("@vscode/debugadapter");
+var path_browserify_1 = require("path-browserify");
+var fshRuntime_1 = require("./fshRuntime");
+var await_notify_1 = require("await-notify");
+var MockDebugSession = /** @class */ (function (_super) {
+    __extends(MockDebugSession, _super);
     /**
      * Creates a new debug adapter that is used for one debug session.
      * We configure the default implementation of a debug adapter here.
      */
-    constructor(fileAccessor) {
-        super("fsh-validator.txt");
-        this._variableHandles = new debugadapter_1.Handles();
-        this._configurationDone = new await_notify_1.Subject();
-        this._cancellationTokens = new Map();
-        this._reportProgress = false;
-        this._progressId = 10000;
-        this._cancelledProgressId = undefined;
-        this._isProgressCancellable = true;
-        this._valuesInHex = false;
-        this._useInvalidatedEvent = false;
-        this._addressesInHex = true;
+    function MockDebugSession(fileAccessor) {
+        var _this = _super.call(this, "fsh-validator.txt") || this;
+        _this._configurationDone = new await_notify_1.Subject();
+        _this._cancellationTokens = new Map();
         // this debugger uses zero-based lines and columns
-        this.setDebuggerLinesStartAt1(false);
-        this.setDebuggerColumnsStartAt1(false);
-        this._runtime = new fshRuntime_1.MockRuntime(fileAccessor);
+        _this.setDebuggerLinesStartAt1(false);
+        _this.setDebuggerColumnsStartAt1(false);
+        _this._runtime = new fshRuntime_1.MockRuntime(fileAccessor);
         // setup event handlers
-        this._runtime.on('stopOnEntry', () => {
-            this.sendEvent(new debugadapter_1.StoppedEvent('entry', MockDebugSession.threadID));
+        _this._runtime.on('stopOnEntry', function () {
+            _this.sendEvent(new debugadapter_1.StoppedEvent('entry', MockDebugSession.threadID));
         });
-        this._runtime.on('stopOnStep', () => {
-            this.sendEvent(new debugadapter_1.StoppedEvent('step', MockDebugSession.threadID));
+        _this._runtime.on('stopOnStep', function () {
+            _this.sendEvent(new debugadapter_1.StoppedEvent('step', MockDebugSession.threadID));
         });
-        this._runtime.on('stopOnBreakpoint', () => {
-            this.sendEvent(new debugadapter_1.StoppedEvent('breakpoint', MockDebugSession.threadID));
+        _this._runtime.on('stopOnBreakpoint', function () {
+            _this.sendEvent(new debugadapter_1.StoppedEvent('breakpoint', MockDebugSession.threadID));
         });
-        this._runtime.on('stopOnDataBreakpoint', () => {
-            this.sendEvent(new debugadapter_1.StoppedEvent('data breakpoint', MockDebugSession.threadID));
+        _this._runtime.on('stopOnDataBreakpoint', function () {
+            _this.sendEvent(new debugadapter_1.StoppedEvent('data breakpoint', MockDebugSession.threadID));
         });
-        this._runtime.on('stopOnInstructionBreakpoint', () => {
-            this.sendEvent(new debugadapter_1.StoppedEvent('instruction breakpoint', MockDebugSession.threadID));
+        _this._runtime.on('stopOnInstructionBreakpoint', function () {
+            _this.sendEvent(new debugadapter_1.StoppedEvent('instruction breakpoint', MockDebugSession.threadID));
         });
-        this._runtime.on('stopOnException', (exception) => {
+        _this._runtime.on('stopOnException', function (exception) {
             if (exception) {
-                this.sendEvent(new debugadapter_1.StoppedEvent(`exception(${exception})`, MockDebugSession.threadID));
+                _this.sendEvent(new debugadapter_1.StoppedEvent("exception(".concat(exception, ")"), MockDebugSession.threadID));
             }
             else {
-                this.sendEvent(new debugadapter_1.StoppedEvent('exception', MockDebugSession.threadID));
+                _this.sendEvent(new debugadapter_1.StoppedEvent('exception', MockDebugSession.threadID));
             }
         });
-        this._runtime.on('breakpointValidated', (bp) => {
-            this.sendEvent(new debugadapter_1.BreakpointEvent('changed', { verified: bp.verified, id: bp.id }));
+        _this._runtime.on('breakpointValidated', function (bp) {
+            _this.sendEvent(new debugadapter_1.BreakpointEvent('changed', { verified: bp.verified, id: bp.id }));
         });
-        this._runtime.on('output', (type, text, filePath, line, column) => {
-            let category;
+        _this._runtime.on('output', function (type, text, filePath, line, column) {
+            var category;
             switch (type) {
                 case 'prio':
                     category = 'important';
@@ -80,31 +124,26 @@ class MockDebugSession extends debugadapter_1.LoggingDebugSession {
                     category = 'console';
                     break;
             }
-            const e = new debugadapter_1.OutputEvent(`${text}\n`, category);
+            var e = new debugadapter_1.OutputEvent("".concat(text, "\n"), category);
             if (text === 'start' || text === 'startCollapsed' || text === 'end') {
                 e.body.group = text;
-                e.body.output = `group-${text}\n`;
+                e.body.output = "group-".concat(text, "\n");
             }
-            e.body.source = this.createSource(filePath);
-            e.body.line = this.convertDebuggerLineToClient(line);
-            e.body.column = this.convertDebuggerColumnToClient(column);
-            this.sendEvent(e);
+            e.body.source = _this.createSource(filePath);
+            e.body.line = _this.convertDebuggerLineToClient(line);
+            e.body.column = _this.convertDebuggerColumnToClient(column);
+            _this.sendEvent(e);
         });
-        this._runtime.on('end', () => {
-            this.sendEvent(new debugadapter_1.TerminatedEvent());
+        _this._runtime.on('end', function () {
+            _this.sendEvent(new debugadapter_1.TerminatedEvent());
         });
+        return _this;
     }
     /**
      * The 'initialize' request is the first request called by the frontend
      * to interrogate the features the debug adapter provides.
      */
-    initializeRequest(response, args) {
-        if (args.supportsProgressReporting) {
-            this._reportProgress = true;
-        }
-        if (args.supportsInvalidatedEvent) {
-            this._useInvalidatedEvent = true;
-        }
+    MockDebugSession.prototype.initializeRequest = function (response, args) {
         // build and return the capabilities of this debug adapter:
         response.body = response.body || {};
         // the adapter implements the configurationDone request.
@@ -130,10 +169,10 @@ class MockDebugSession extends debugadapter_1.LoggingDebugSession {
             {
                 filter: 'namedException',
                 label: "Named Exception",
-                description: `Break on named exceptions. Enter the exception's name as the Condition.`,
+                description: "Break on named exceptions. Enter the exception's name as the Condition.",
                 default: false,
                 supportsCondition: true,
-                conditionDescription: `Enter the exception's name`
+                conditionDescription: "Enter the exception's name"
             },
             {
                 filter: 'otherExceptions',
@@ -165,136 +204,102 @@ class MockDebugSession extends debugadapter_1.LoggingDebugSession {
         // we request them early by sending an 'initializeRequest' to the frontend.
         // The frontend will end the configuration sequence by calling 'configurationDone' request.
         this.sendEvent(new debugadapter_1.InitializedEvent());
-        // Hendrik was here
-        console.info('irgendwas intialized');
-    }
+    };
     /**
      * Called at the end of the configuration sequence.
      * Indicates that all breakpoints etc. have been sent to the DA and that the 'launch' can start.
      */
-    configurationDoneRequest(response, args) {
-        super.configurationDoneRequest(response, args);
+    MockDebugSession.prototype.configurationDoneRequest = function (response, args) {
+        _super.prototype.configurationDoneRequest.call(this, response, args);
         // notify the launchRequest that configuration has finished
         this._configurationDone.notify();
-    }
-    disconnectRequest(response, args, request) {
-        console.log(`disconnectRequest suspend: ${args.suspendDebuggee}, terminate: ${args.terminateDebuggee}`);
-    }
-    async attachRequest(response, args) {
-        return this.launchRequest(response, args);
-    }
-    async launchRequest(response, args) {
-        // make sure to 'Stop' the buffered logging if 'trace' is not set
-        debugadapter_1.logger.setup(args.trace ? debugadapter_1.Logger.LogLevel.Verbose : debugadapter_1.Logger.LogLevel.Stop, false);
-        // wait 1 second until configuration has finished (and configurationDoneRequest has been called)
-        await this._configurationDone.wait(1000);
-        // start the program in the runtime
-        await this._runtime.start(args.program, !!args.stopOnEntry, !args.noDebug);
-        if (args.compileError) {
-            // simulate a compile/build error in "launch" request:
-            // the error should not result in a modal dialog since 'showUser' is set to false.
-            // A missing 'showUser' should result in a modal dialog.
-            this.sendErrorResponse(response, {
-                id: 1001,
-                format: `compile error: some fake error.`,
-                showUser: args.compileError === 'show' ? true : (args.compileError === 'hide' ? false : undefined)
+    };
+    MockDebugSession.prototype.disconnectRequest = function (response, args, request) {
+        console.log("disconnectRequest suspend: ".concat(args.suspendDebuggee, ", terminate: ").concat(args.terminateDebuggee));
+    };
+    MockDebugSession.prototype.attachRequest = function (response, args) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.launchRequest(response, args)];
             });
-        }
-        else {
-            this.sendResponse(response);
-        }
-    }
-    setFunctionBreakPointsRequest(response, args, request) {
-        this.sendResponse(response);
-    }
-    async setBreakPointsRequest(response, args) {
-        // Hendrik was here
-        console.info('interessant, jemand will break pointen');
-        const path = args.source.path;
-        const clientLines = args.lines || [];
-        // clear all breakpoints for this file
-        this._runtime.clearBreakpoints(path);
-        // set and verify breakpoint locations
-        const actualBreakpoints0 = clientLines.map(async (l) => {
-            const { verified, line, id } = await this._runtime.setBreakPoint(path, this.convertClientLineToDebugger(l));
-            const bp = new debugadapter_1.Breakpoint(verified, this.convertDebuggerLineToClient(line));
-            bp.id = id;
-            return bp;
         });
-        const actualBreakpoints = await Promise.all(actualBreakpoints0);
-        // send back the actual breakpoint positions
-        response.body = {
-            breakpoints: actualBreakpoints
-        };
-        this.sendResponse(response);
-    }
-    /*
-    protected breakpointLocationsRequest(response: DebugProtocol.BreakpointLocationsResponse, args: DebugProtocol.BreakpointLocationsArguments, request?: DebugProtocol.Request): void {
-
-        //Hendrik was here
-        console.info('breakpoints genau hier');
-        if (args.source.path) {
-            const bps = this._runtime.getBreakpoints(args.source.path, this.convertClientLineToDebugger(args.line));
-            response.body = {
-                breakpoints: bps.map(col => {
-                    return {
-                        line: args.line,
-                        column: this.convertDebuggerColumnToClient(col)
-                    };
-                })
-            };
-        } else {
-            response.body = {
-                breakpoints: []
-            };
-        }
-        this.sendResponse(response);
-    }
-
-    protected async setExceptionBreakPointsRequest(response: DebugProtocol.SetExceptionBreakpointsResponse, args: DebugProtocol.SetExceptionBreakpointsArguments): Promise<void> {
-
-        let namedException: string | undefined = undefined;
-        let otherExceptions = false;
-
-        if (args.filterOptions) {
-            for (const filterOption of args.filterOptions) {
-                switch (filterOption.filterId) {
-                    case 'namedException':
-                        namedException = args.filterOptions[0].condition;
-                        break;
-                    case 'otherExceptions':
-                        otherExceptions = true;
-                        break;
+    };
+    MockDebugSession.prototype.launchRequest = function (response, args) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        // make sure to 'Stop' the buffered logging if 'trace' is not set
+                        debugadapter_1.logger.setup(args.trace ? debugadapter_1.Logger.LogLevel.Verbose : debugadapter_1.Logger.LogLevel.Stop, false);
+                        // wait 1 second until configuration has finished (and configurationDoneRequest has been called)
+                        return [4 /*yield*/, this._configurationDone.wait(1000)];
+                    case 1:
+                        // wait 1 second until configuration has finished (and configurationDoneRequest has been called)
+                        _a.sent();
+                        // start the program in the runtime
+                        return [4 /*yield*/, this._runtime.start(args.program, !!args.stopOnEntry, !args.noDebug)];
+                    case 2:
+                        // start the program in the runtime
+                        _a.sent();
+                        if (args.compileError) {
+                            // simulate a compile/build error in "launch" request:
+                            // the error should not result in a modal dialog since 'showUser' is set to false.
+                            // A missing 'showUser' should result in a modal dialog.
+                            this.sendErrorResponse(response, {
+                                id: 1001,
+                                format: "compile error: some fake error.",
+                                showUser: args.compileError === 'show' ? true : (args.compileError === 'hide' ? false : undefined)
+                            });
+                        }
+                        else {
+                            this.sendResponse(response);
+                        }
+                        return [2 /*return*/];
                 }
-            }
-        }
-
-        if (args.filters) {
-            if (args.filters.indexOf('otherExceptions') >= 0) {
-                otherExceptions = true;
-            }
-        }
-
-        this._runtime.setExceptionsFilters(namedException, otherExceptions);
-
+            });
+        });
+    };
+    MockDebugSession.prototype.setFunctionBreakPointsRequest = function (response, args, request) {
         this.sendResponse(response);
-    }
-
-    protected exceptionInfoRequest(response: DebugProtocol.ExceptionInfoResponse, args: DebugProtocol.ExceptionInfoArguments) {
-        response.body = {
-            exceptionId: 'Exception ID',
-            description: 'This is a descriptive description of the exception.',
-            breakMode: 'always',
-            details: {
-                message: 'Message contained in the exception.',
-                typeName: 'Short type name of the exception object',
-                stackTrace: 'stack frame 1\nstack frame 2',
-            }
-        };
-        this.sendResponse(response);
-    }
-*/
-    threadsRequest(response) {
+    };
+    MockDebugSession.prototype.setBreakPointsRequest = function (response, args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var path, clientLines, actualBreakpoints0, actualBreakpoints;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        path = args.source.path;
+                        clientLines = args.lines || [];
+                        // clear all breakpoints for this file
+                        this._runtime.clearBreakpoints(path);
+                        actualBreakpoints0 = clientLines.map(function (l) { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, verified, line, id, bp;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0: return [4 /*yield*/, this._runtime.setBreakPoint(path, this.convertClientLineToDebugger(l))];
+                                    case 1:
+                                        _a = _b.sent(), verified = _a.verified, line = _a.line, id = _a.id;
+                                        bp = new debugadapter_1.Breakpoint(verified, this.convertDebuggerLineToClient(line));
+                                        bp.id = id;
+                                        return [2 /*return*/, bp];
+                                }
+                            });
+                        }); });
+                        return [4 /*yield*/, Promise.all(actualBreakpoints0)];
+                    case 1:
+                        actualBreakpoints = _a.sent();
+                        // send back the actual breakpoint positions
+                        response.body = {
+                            breakpoints: actualBreakpoints
+                        };
+                        this.sendResponse(response);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    MockDebugSession.prototype.threadsRequest = function (response) {
         // runtime supports no threads so just return a default thread.
         response.body = {
             threads: [
@@ -303,332 +308,41 @@ class MockDebugSession extends debugadapter_1.LoggingDebugSession {
             ]
         };
         this.sendResponse(response);
-    }
-    /*
-        protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void {
-    
-            const startFrame = typeof args.startFrame === 'number' ? args.startFrame : 0;
-            const maxLevels = typeof args.levels === 'number' ? args.levels : 1000;
-            const endFrame = startFrame + maxLevels;
-    
-            const stk = this._runtime.stack(startFrame, endFrame);
-    
-            response.body = {
-                stackFrames: stk.frames.map((f, ix) => {
-                    const sf: DebugProtocol.StackFrame = new StackFrame(f.index, f.name, this.createSource(f.file), this.convertDebuggerLineToClient(f.line));
-                    if (typeof f.column === 'number') {
-                        sf.column = this.convertDebuggerColumnToClient(f.column);
-                    }
-                    if (typeof f.instruction === 'number') {
-                        const address = this.formatAddress(f.instruction);
-                        sf.name = `${f.name} ${address}`;
-                        sf.instructionPointerReference = address;
-                    }
-    
-                    return sf;
-                }),
-                // 4 options for 'totalFrames':
-                //omit totalFrames property: 	// VS Code has to probe/guess. Should result in a max. of two requests
-                totalFrames: stk.count			// stk.count is the correct size, should result in a max. of two requests
-                //totalFrames: 1000000 			// not the correct size, should result in a max. of two requests
-                //totalFrames: endFrame + 20 	// dynamically increases the size with every requested chunk, results in paging
-            };
-            this.sendResponse(response);
-        }
-    
-        protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void {
-    
-            response.body = {
-                scopes: [
-                    new Scope("Locals", this._variableHandles.create('locals'), false),
-                    new Scope("Globals", this._variableHandles.create('globals'), true)
-                ]
-            };
-            this.sendResponse(response);
-        }
-    
-        protected async writeMemoryRequest(response: DebugProtocol.WriteMemoryResponse, { data, memoryReference, offset = 0 }: DebugProtocol.WriteMemoryArguments) {
-            const variable = this._variableHandles.get(Number(memoryReference));
-            if (typeof variable === 'object') {
-                const decoded = base64.toByteArray(data);
-                variable.setMemory(decoded, offset);
-                response.body = { bytesWritten: decoded.length };
-            } else {
-                response.body = { bytesWritten: 0 };
-            }
-    
-            this.sendResponse(response);
-            this.sendEvent(new InvalidatedEvent(['variables']));
-        }
-    
-        protected async readMemoryRequest(response: DebugProtocol.ReadMemoryResponse, { offset = 0, count, memoryReference }: DebugProtocol.ReadMemoryArguments) {
-            const variable = this._variableHandles.get(Number(memoryReference));
-            if (typeof variable === 'object' && variable.memory) {
-                const memory = variable.memory.subarray(
-                    Math.min(offset, variable.memory.length),
-                    Math.min(offset + count, variable.memory.length),
-                );
-    
-                response.body = {
-                    address: offset.toString(),
-                    data: base64.fromByteArray(memory),
-                    unreadableBytes: count - memory.length
-                };
-            } else {
-                response.body = {
-                    address: offset.toString(),
-                    data: '',
-                    unreadableBytes: count
-                };
-            }
-    
-            this.sendResponse(response);
-        }
-    
-        protected async variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments, request?: DebugProtocol.Request): Promise<void> {
-    
-            let vs: RuntimeVariable[] = [];
-    
-            const v = this._variableHandles.get(args.variablesReference);
-            if (v === 'locals') {
-                vs = this._runtime.getLocalVariables();
-            } else if (v === 'globals') {
-                if (request) {
-                    this._cancellationTokens.set(request.seq, false);
-                    vs = await this._runtime.getGlobalVariables(() => !!this._cancellationTokens.get(request.seq));
-                    this._cancellationTokens.delete(request.seq);
-                } else {
-                    vs = await this._runtime.getGlobalVariables();
-                }
-            } else if (v && Array.isArray(v.value)) {
-                vs = v.value;
-            }
-    
-            response.body = {
-                variables: vs.map(v => this.convertFromRuntime(v))
-            };
-            this.sendResponse(response);
-        }
-    
-        protected setVariableRequest(response: DebugProtocol.SetVariableResponse, args: DebugProtocol.SetVariableArguments): void {
-            const container = this._variableHandles.get(args.variablesReference);
-            const rv = container === 'locals'
-                ? this._runtime.getLocalVariable(args.name)
-                : container instanceof RuntimeVariable && container.value instanceof Array
-                ? container.value.find(v => v.name === args.name)
-                : undefined;
-    
-            if (rv) {
-                rv.value = this.convertToRuntime(args.value);
-                response.body = this.convertFromRuntime(rv);
-    
-                if (rv.memory && rv.reference) {
-                    this.sendEvent(new MemoryEvent(String(rv.reference), 0, rv.memory.length));
-                }
-            }
-    
-            this.sendResponse(response);
-        }
-    */
-    continueRequest(response, args) {
+    };
+    MockDebugSession.prototype.continueRequest = function (response, args) {
         this._runtime.continue(false);
         this.sendResponse(response);
-    }
-    reverseContinueRequest(response, args) {
+    };
+    MockDebugSession.prototype.reverseContinueRequest = function (response, args) {
         this._runtime.continue(true);
         this.sendResponse(response);
-    }
-    nextRequest(response, args) {
+    };
+    MockDebugSession.prototype.nextRequest = function (response, args) {
         this._runtime.step(args.granularity === 'instruction', false);
         this.sendResponse(response);
-    }
-    stepBackRequest(response, args) {
+    };
+    MockDebugSession.prototype.stepBackRequest = function (response, args) {
         this._runtime.step(args.granularity === 'instruction', true);
         this.sendResponse(response);
-    }
-    stepInTargetsRequest(response, args) {
-        const targets = this._runtime.getStepInTargets(args.frameId);
+    };
+    MockDebugSession.prototype.stepInTargetsRequest = function (response, args) {
+        var targets = this._runtime.getStepInTargets(args.frameId);
         response.body = {
-            targets: targets.map(t => {
+            targets: targets.map(function (t) {
                 return { id: t.id, label: t.label };
             })
         };
         this.sendResponse(response);
-    }
-    stepInRequest(response, args) {
+    };
+    MockDebugSession.prototype.stepInRequest = function (response, args) {
         this._runtime.stepIn(args.targetId);
         this.sendResponse(response);
-    }
-    stepOutRequest(response, args) {
+    };
+    MockDebugSession.prototype.stepOutRequest = function (response, args) {
         this._runtime.stepOut();
         this.sendResponse(response);
-    }
-    /*
-        protected async evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): Promise<void> {
-    
-            let reply: string | undefined;
-            let rv: RuntimeVariable | undefined;
-    
-            switch (args.context) {
-                case 'repl':
-                    // handle some REPL commands:
-                    // 'evaluate' supports to create and delete breakpoints from the 'repl':
-                    const matches = /new +([0-9]+)/.exec(args.expression);
-                    if (matches && matches.length === 2) {
-                        const mbp = await this._runtime.setBreakPoint(this._runtime.sourceFile, this.convertClientLineToDebugger(parseInt(matches[1])));
-                        const bp = new Breakpoint(mbp.verified, this.convertDebuggerLineToClient(mbp.line), undefined, this.createSource(this._runtime.sourceFile)) as DebugProtocol.Breakpoint;
-                        bp.id= mbp.id;
-                        this.sendEvent(new BreakpointEvent('new', bp));
-                        reply = `breakpoint created`;
-                    } else {
-                        const matches = /del +([0-9]+)/.exec(args.expression);
-                        if (matches && matches.length === 2) {
-                            const mbp = this._runtime.clearBreakPoint(this._runtime.sourceFile, this.convertClientLineToDebugger(parseInt(matches[1])));
-                            if (mbp) {
-                                const bp = new Breakpoint(false) as DebugProtocol.Breakpoint;
-                                bp.id= mbp.id;
-                                this.sendEvent(new BreakpointEvent('removed', bp));
-                                reply = `breakpoint deleted`;
-                            }
-                        } else {
-                            const matches = /progress/.exec(args.expression);
-                            if (matches && matches.length === 1) {
-                                if (this._reportProgress) {
-                                    reply = `progress started`;
-                                    this.progressSequence();
-                                } else {
-                                    reply = `frontend doesn't support progress (capability 'supportsProgressReporting' not set)`;
-                                }
-                            }
-                        }
-                    }
-                    // fall through
-    
-                default:
-                    if (args.expression.startsWith('$')) {
-                        rv = this._runtime.getLocalVariable(args.expression.substr(1));
-                    } else {
-                        rv = new RuntimeVariable('eval', this.convertToRuntime(args.expression));
-                    }
-                    break;
-            }
-    
-            if (rv) {
-                const v = this.convertFromRuntime(rv);
-                response.body = {
-                    result: v.value,
-                    type: v.type,
-                    variablesReference: v.variablesReference,
-                    presentationHint: v.presentationHint
-                };
-            } else {
-                response.body = {
-                    result: reply ? reply : `evaluate(context: '${args.context}', '${args.expression}')`,
-                    variablesReference: 0
-                };
-            }
-    
-            this.sendResponse(response);
-        }
-    
-        protected setExpressionRequest(response: DebugProtocol.SetExpressionResponse, args: DebugProtocol.SetExpressionArguments): void {
-    
-            if (args.expression.startsWith('$')) {
-                const rv = this._runtime.getLocalVariable(args.expression.substr(1));
-                if (rv) {
-                    rv.value = this.convertToRuntime(args.value);
-                    response.body = this.convertFromRuntime(rv);
-                    this.sendResponse(response);
-                } else {
-                    this.sendErrorResponse(response, {
-                        id: 1002,
-                        format: `variable '{lexpr}' not found`,
-                        variables: { lexpr: args.expression },
-                        showUser: true
-                    });
-                }
-            } else {
-                this.sendErrorResponse(response, {
-                    id: 1003,
-                    format: `'{lexpr}' not an assignable expression`,
-                    variables: { lexpr: args.expression },
-                    showUser: true
-                });
-            }
-        }
-    */
-    async progressSequence() {
-        const ID = '' + this._progressId++;
-        await (0, fshRuntime_1.timeout)(100);
-        const title = this._isProgressCancellable ? 'Cancellable operation' : 'Long running operation';
-        const startEvent = new debugadapter_1.ProgressStartEvent(ID, title);
-        startEvent.body.cancellable = this._isProgressCancellable;
-        this._isProgressCancellable = !this._isProgressCancellable;
-        this.sendEvent(startEvent);
-        this.sendEvent(new debugadapter_1.OutputEvent(`start progress: ${ID}\n`));
-        let endMessage = 'progress ended';
-        for (let i = 0; i < 100; i++) {
-            await (0, fshRuntime_1.timeout)(500);
-            this.sendEvent(new debugadapter_1.ProgressUpdateEvent(ID, `progress: ${i}`));
-            if (this._cancelledProgressId === ID) {
-                endMessage = 'progress cancelled';
-                this._cancelledProgressId = undefined;
-                this.sendEvent(new debugadapter_1.OutputEvent(`cancel progress: ${ID}\n`));
-                break;
-            }
-        }
-        this.sendEvent(new debugadapter_1.ProgressEndEvent(ID, endMessage));
-        this.sendEvent(new debugadapter_1.OutputEvent(`end progress: ${ID}\n`));
-        this._cancelledProgressId = undefined;
-    }
-    /*
-        protected dataBreakpointInfoRequest(response: DebugProtocol.DataBreakpointInfoResponse, args: DebugProtocol.DataBreakpointInfoArguments): void {
-    
-            response.body = {
-                dataId: null,
-                description: "cannot break on data access",
-                accessTypes: undefined,
-                canPersist: false
-            };
-    
-            if (args.variablesReference && args.name) {
-                const v = this._variableHandles.get(args.variablesReference);
-                if (v === 'globals') {
-                    response.body.dataId = args.name;
-                    response.body.description = args.name;
-                    response.body.accessTypes = [ "write" ];
-                    response.body.canPersist = true;
-                } else {
-                    response.body.dataId = args.name;
-                    response.body.description = args.name;
-                    response.body.accessTypes = ["read", "write", "readWrite"];
-                    response.body.canPersist = true;
-                }
-            }
-    
-            this.sendResponse(response);
-        }
-    
-        protected setDataBreakpointsRequest(response: DebugProtocol.SetDataBreakpointsResponse, args: DebugProtocol.SetDataBreakpointsArguments): void {
-    
-            // clear all data breakpoints
-            this._runtime.clearAllDataBreakpoints();
-    
-            response.body = {
-                breakpoints: []
-            };
-    
-            for (const dbp of args.breakpoints) {
-                const ok = this._runtime.setDataBreakpoint(dbp.dataId, dbp.accessType || 'write');
-                response.body.breakpoints.push({
-                    verified: ok
-                });
-            }
-    
-            this.sendResponse(response);
-        }
-    */
-    completionsRequest(response, args) {
+    };
+    MockDebugSession.prototype.completionsRequest = function (response, args) {
         response.body = {
             targets: [
                 {
@@ -659,175 +373,18 @@ class MockDebugSession extends debugadapter_1.LoggingDebugSession {
             ]
         };
         this.sendResponse(response);
-    }
-    cancelRequest(response, args) {
+    };
+    MockDebugSession.prototype.cancelRequest = function (response, args) {
         if (args.requestId) {
             this._cancellationTokens.set(args.requestId, true);
         }
-        if (args.progressId) {
-            this._cancelledProgressId = args.progressId;
-        }
-    }
-    /*
-        protected disassembleRequest(response: DebugProtocol.DisassembleResponse, args: DebugProtocol.DisassembleArguments) {
-    
-            const baseAddress = parseInt(args.memoryReference);
-            const offset = args.instructionOffset || 0;
-            const count = args.instructionCount;
-    
-            const isHex = args.memoryReference.startsWith('0x');
-            const pad = isHex ? args.memoryReference.length-2 : args.memoryReference.length;
-    
-            const loc = this.createSource(this._runtime.sourceFile);
-    
-            let lastLine = -1;
-    
-            const instructions = this._runtime.disassemble(baseAddress+offset, count).map(instruction => {
-                const address = instruction.address.toString(isHex ? 16 : 10).padStart(pad, '0');
-                const instr : DebugProtocol.DisassembledInstruction = {
-                    address: isHex ? `0x${address}` : `${address}`,
-                    instruction: instruction.instruction
-                };
-                // if instruction's source starts on a new line add the source to instruction
-                if (instruction.line !== undefined && lastLine !== instruction.line) {
-                    lastLine = instruction.line;
-                    instr.location = loc;
-                    instr.line = this.convertDebuggerLineToClient(instruction.line);
-                }
-                return instr;
-            });
-    
-            response.body = {
-                instructions: instructions
-            };
-            this.sendResponse(response);
-        }
-    
-        protected setInstructionBreakpointsRequest(response: DebugProtocol.SetInstructionBreakpointsResponse, args: DebugProtocol.SetInstructionBreakpointsArguments) {
-    
-            // clear all instruction breakpoints
-            this._runtime.clearInstructionBreakpoints();
-    
-            // set instruction breakpoints
-            const breakpoints = args.breakpoints.map(ibp => {
-                const address = parseInt(ibp.instructionReference);
-                const offset = ibp.offset || 0;
-                return <DebugProtocol.Breakpoint>{
-                    verified: this._runtime.setInstructionBreakpoint(address + offset)
-                };
-            });
-    
-            response.body = {
-                breakpoints: breakpoints
-            };
-            this.sendResponse(response);
-        }
-    
-        protected customRequest(command: string, response: DebugProtocol.Response, args: any) {
-            if (command === 'toggleFormatting') {
-                this._valuesInHex = ! this._valuesInHex;
-                if (this._useInvalidatedEvent) {
-                    this.sendEvent(new InvalidatedEvent( ['variables'] ));
-                }
-                this.sendResponse(response);
-            } else {
-                super.customRequest(command, response, args);
-            }
-        }
-    */
-    //---- helpers
-    /*
-        private convertToRuntime(value: string): IRuntimeVariableType {
-    
-            value= value.trim();
-    
-            if (value === 'true') {
-                return true;
-            }
-            if (value === 'false') {
-                return false;
-            }
-            if (value[0] === '\'' || value[0] === '"') {
-                return value.substr(1, value.length-2);
-            }
-            const n = parseFloat(value);
-            if (!isNaN(n)) {
-                return n;
-            }
-            return value;
-        }
-    
-        private convertFromRuntime(v: RuntimeVariable): DebugProtocol.Variable {
-    
-            let dapVariable: DebugProtocol.Variable = {
-                name: v.name,
-                value: '???',
-                type: typeof v.value,
-                variablesReference: 0,
-                evaluateName: '$' + v.name
-            };
-    
-            if (v.name.indexOf('lazy') >= 0) {
-                // a "lazy" variable needs an additional click to retrieve its value
-    
-                dapVariable.value = 'lazy var';		// placeholder value
-                v.reference ??= this._variableHandles.create(new RuntimeVariable('', [ new RuntimeVariable('', v.value) ]));
-                dapVariable.variablesReference = v.reference;
-                dapVariable.presentationHint = { lazy: true };
-            } else {
-    
-                if (Array.isArray(v.value)) {
-                    dapVariable.value = 'Object';
-                    v.reference ??= this._variableHandles.create(v);
-                    dapVariable.variablesReference = v.reference;
-                } else {
-    
-                    switch (typeof v.value) {
-                        case 'number':
-                            if (Math.round(v.value) === v.value) {
-                                dapVariable.value = this.formatNumber(v.value);
-                                (<any>dapVariable).__vscodeVariableMenuContext = 'simple';	// enable context menu contribution
-                                dapVariable.type = 'integer';
-                            } else {
-                                dapVariable.value = v.value.toString();
-                                dapVariable.type = 'float';
-                            }
-                            break;
-                        case 'string':
-                            dapVariable.value = `"${v.value}"`;
-                            break;
-                        case 'boolean':
-                            dapVariable.value = v.value ? 'true' : 'false';
-                            break;
-                        default:
-                            dapVariable.value = typeof v.value;
-                            break;
-                    }
-                }
-            }
-    
-            if (v.memory) {
-                v.reference ??= this._variableHandles.create(v);
-                dapVariable.memoryReference = String(v.reference);
-            }
-    
-            return dapVariable;
-        }
-    
-        private formatAddress(x: number, pad = 8) {
-            return this._addressesInHex ? '0x' + x.toString(16).padStart(8, '0') : x.toString(10);
-        }
-    
-        private formatNumber(x: number) {
-            return this._valuesInHex ? '0x' + x.toString(16) : x.toString(10);
-        }
-    */
-    // Hendrik was here und wird im Constructor gebraucht
-    createSource(filePath) {
+    };
+    MockDebugSession.prototype.createSource = function (filePath) {
         return new debugadapter_1.Source((0, path_browserify_1.basename)(filePath), this.convertDebuggerPathToClient(filePath), undefined, undefined, 'mock-adapter-data');
-    }
-}
+    };
+    // we don't support multiple threads, so we can use a hardcoded ID for the default thread
+    MockDebugSession.threadID = 1;
+    return MockDebugSession;
+}(debugadapter_1.LoggingDebugSession));
 exports.MockDebugSession = MockDebugSession;
-// we don't support multiple threads, so we can use a hardcoded ID for the default thread
-MockDebugSession.threadID = 1;
 //# sourceMappingURL=fshDebug.js.map

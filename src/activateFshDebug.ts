@@ -1,6 +1,8 @@
+import { ChildProcess } from 'child_process';
 import * as vscode from 'vscode';
 import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken, Diagnostic } from 'vscode';
 import { FileAccessor } from './fshRuntime';
+import { SushiRunner } from './sushiRunner';
 
 
 export function activateMockDebug(context: vscode.ExtensionContext, factory?: vscode.DebugAdapterDescriptorFactory) {
@@ -14,20 +16,45 @@ export function activateMockDebug(context: vscode.ExtensionContext, factory?: vs
 		let diagnostics: Array<vscode.Diagnostic> = Array();
 		vscode.window.showInformationMessage('Hallo Robert, du hast F5 gedrückt');
 
+		diagnosticCollection = vscode.languages.createDiagnosticCollection('fsh');
+
 		// 1. run sushi
 		console.info('### run some sushi Resources');
+		var sushi = new SushiRunner();
+		sushi.runSushi();
 
 		// 2. filter sushi errors
 		console.info('### IF sushi error then ADD problem');
 		if (f) {
-			diagnosticCollection = vscode.languages.createDiagnosticCollection('fsh');
+			if (sushi.sushiError.length > 0) {
+				for (var err of sushi.sushiError) {
+					let range = new vscode.Range(4, 0, 4, 100);
+					let d = new Diagnostic(range, err.toString() , vscode.DiagnosticSeverity.Error);
 
-			let range = new vscode.Range(4, 1, 4, 6);
-			let d = new Diagnostic(range, "Hallo Problem-Robert",vscode.DiagnosticSeverity.Error);
+					diagnostics.push(d);
+				}
+			}
 
-			diagnostics.push(d);
+			if (sushi.sushiWarn.length > 0) {
+				for (var warn of sushi.sushiWarn) {
+					let range = new vscode.Range(1, 2, 1, 6);
+					let d = new Diagnostic(range, warn.toString() , vscode.DiagnosticSeverity.Warning);
+
+					diagnostics.push(d);
+				}
+			}
+
+			if (sushi.sushiInfo.length > 0) {
+				for (var info of sushi.sushiInfo) {
+					let d = new Diagnostic(new vscode.Range(0, 0, 0, 0), info.toString() , vscode.DiagnosticSeverity.Information);
+
+					diagnostics.push(d);
+				}
+			}
+
 			diagnosticCollection.set(f, diagnostics);
 		}
+
 		// now maybe exit?
 
 
