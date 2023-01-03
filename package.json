@@ -12,18 +12,12 @@
   "activationEvents": [
     "onCommand:fsh-validator.runFhirFsh",
     "onCommand:extension.fsh-validator.getProgramName",
-    "onCommand:extension.fsh-validator.runEditorContents",
     "onCommand:extension.fsh-validator.debugEditorContents"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "menus": {
       "editor/title/run": [
-        {
-          "command": "extension.fsh-validator.runEditorContents",
-          "when": "resourceLangId == markdown",
-          "group": "navigation@1"
-        },
         {
           "command": "extension.fsh-validator.debugEditorContents",
           "when": "resourceLangId == markdown",
@@ -34,16 +28,6 @@
         {
           "command": "extension.fsh-validator.debugEditorContents",
           "when": "resourceLangId == markdown"
-        },
-        {
-          "command": "extension.fsh-validator.runEditorContents",
-          "when": "resourceLangId == markdown"
-        }
-      ],
-      "debug/variables/context": [
-        {
-          "command": "extension.fsh-validator.toggleFormatting",
-          "when": "debugType == 'mock' && debugProtocolVariableMenuContext == 'simple'"
         }
       ]
     },
@@ -60,28 +44,16 @@
         "icon": "$(debug-alt)"
       },
       {
-        "command": "extension.fsh-validator.runEditorContents",
-        "title": "Run File",
+        "command": "extension.fsh-validator.getProgramName",
+        "title": "Debug File",
         "category": "Mock Debug",
         "enablement": "!inDebugMode",
-        "icon": "$(play)"
-      },
-      {
-        "command": "extension.fsh-validator.toggleFormatting",
-        "title": "Toggle between decimal and hex formatting"
-      }
-    ],
-    "breakpoints": [
-      {
-        "language": "markdown"
+        "icon": "$(debug-alt)"
       }
     ],
     "debuggers": [
       {
         "type": "mock",
-        "languages": [
-          "markdown"
-        ],
         "label": "Mock Debug",
         "program": "./out/debugAdapter.js",
         "runtime": "node",
@@ -105,20 +77,6 @@
                 "type": "boolean",
                 "description": "Enable logging of the Debug Adapter Protocol.",
                 "default": true
-              },
-              "compileError": {
-                "type": "string",
-                "description": "Simulates a compile error in 'launch' request.",
-                "enum": [
-                  "default",
-                  "show",
-                  "hide"
-                ],
-                "enumDescriptions": [
-                  "default: show fake compile error to user",
-                  "show fake compile error to user",
-                  "do not show fake compile error to user"
-                ]
               }
             }
           },
@@ -141,20 +99,6 @@
                 "type": "boolean",
                 "description": "Enable logging of the Debug Adapter Protocol.",
                 "default": true
-              },
-              "compileError": {
-                "type": "string",
-                "description": "Simulates a compile error in 'attach' request.",
-                "enum": [
-                  "default",
-                  "show",
-                  "hide"
-                ],
-                "enumDescriptions": [
-                  "default: show fake compile error to user",
-                  "show fake compile error to user",
-                  "do not show fake compile error to user"
-                ]
               }
             }
           }
@@ -210,8 +154,7 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "lint": "eslint src --ext ts"
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
