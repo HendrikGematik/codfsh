@@ -1,4 +1,5 @@
-
+# ARCHIVED 10/Feb/2023
+# Please refer to https://github.com/gematik/codfsh 
 
 # codfsh extension README
 
